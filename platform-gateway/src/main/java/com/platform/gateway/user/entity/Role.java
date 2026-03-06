@@ -1,6 +1,5 @@
 package com.platform.gateway.user.entity;
 
-import java.security.Permission;
 import java.util.HashSet;
 import java.util.Set;
 

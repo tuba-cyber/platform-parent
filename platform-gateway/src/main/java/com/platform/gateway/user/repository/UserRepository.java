@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.platform.gateway.user.entity.User;
@@ -27,5 +28,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
         WHERE u.username = :username 
         AND u.active = true
     """)
-    Optional<User> findByUsernameWithRolesAndPermissions(String username);
+    Optional<User> findByUsernameWithRolesAndPermissions(@Param("username") String username);
 }
