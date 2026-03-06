@@ -25,6 +25,11 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
+
+//Tüm güvenlik kurallarının tanımlandığı yer. 
+//Hangi endpoint'ler açık, hangileri korumalı, 
+//session nasıl yönetilecek gibi kararlar burada alınır.
+
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
@@ -66,6 +71,7 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
     }
 
+    //    şifrelerin BCrypt ile şifreleneceğini ve JWT filter'ın her istekte çalışacağını burada tanımladık.
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

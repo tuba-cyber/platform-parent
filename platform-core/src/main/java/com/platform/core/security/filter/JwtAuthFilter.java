@@ -21,6 +21,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+//Her HTTP isteği geldiğinde **en önce** bu filter çalışır. Şunu sorar: "Authorization header'ında geçerli bir token var mı?"
+
 @Slf4j
 @Component
 @RequiredArgsConstructor

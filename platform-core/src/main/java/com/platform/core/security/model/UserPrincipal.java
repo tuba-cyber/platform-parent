@@ -13,6 +13,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import lombok.Builder;
 import lombok.Getter;
 
+// Kullanıcının kimlik bilgilerini, rollerini ve yetkilerini taşır. 
+//Spring Security bu nesneyi SecurityContext'te tutar, 
+//yani uygulama içinde her yerden erişilebilir.
+
 @Getter
 @Builder
 public class UserPrincipal implements UserDetails {

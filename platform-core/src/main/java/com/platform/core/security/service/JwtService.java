@@ -17,6 +17,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
+//Kullanıcı sisteme giriş yaptığında bu sınıf devreye girer. İki şey yapar: token üretir ve token doğrular.
+
 @Slf4j
 @Service
 public class JwtService {
