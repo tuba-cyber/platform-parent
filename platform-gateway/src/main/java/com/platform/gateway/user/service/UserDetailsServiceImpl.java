@@ -3,6 +3,7 @@ package com.platform.gateway.user.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Primary
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;

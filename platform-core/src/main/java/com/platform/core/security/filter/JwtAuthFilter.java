@@ -2,11 +2,11 @@ package com.platform.core.security.filter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,15 +21,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-//Her HTTP isteği geldiğinde **en önce** bu filter çalışır. Şunu sorar: "Authorization header'ında geçerli bir token var mı?"
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -48,14 +45,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             final String jwt = authHeader.substring(7);
             final String username = jwtService.extractUsername(jwt);
 
-            if (username != null && 
+            if (username != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 List<String> roles = jwtService.extractRoles(jwt);
                 List<String> permissions = jwtService.extractPermissions(jwt);
+                UUID userId = jwtService.extractUserId(jwt);
+                String companyId = jwtService.extractCompanyId(jwt);
 
-                UserPrincipal userPrincipal = (UserPrincipal) 
-                    userDetailsService.loadUserByUsername(username);
+                UserPrincipal userPrincipal = UserPrincipal.builder()
+                        .id(userId)
+                        .username(username)
+                        .password("")
+                        .companyId(companyId)
+                        .roles(roles)
+                        .permissions(permissions)
+                        .active(true)
+                        .build();
 
                 if (jwtService.isTokenValid(jwt, username)) {
                     UsernamePasswordAuthenticationToken authToken =
