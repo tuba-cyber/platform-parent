@@ -33,7 +33,7 @@ public class ScreenController {
 
     @GetMapping("/sections/{sectionId}/screens")
     public ResponseEntity<ApiResponse<List<ScreenResponse>>> getBySectionId(
-            @PathVariable UUID sectionId) {
+            @PathVariable("sectionId") UUID sectionId) {
         return ResponseEntity.ok(
             ApiResponse.success(screenService.getBySectionId(sectionId))
         );
@@ -41,7 +41,7 @@ public class ScreenController {
 
     @GetMapping("/screens/{id}")
     public ResponseEntity<ApiResponse<ScreenResponse>> getById(
-            @PathVariable UUID id) {
+            @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
             ApiResponse.success(screenService.getById(id))
         );
@@ -49,7 +49,7 @@ public class ScreenController {
 
     @GetMapping("/screens/code/{code}")
     public ResponseEntity<ApiResponse<ScreenResponse>> getByCode(
-            @PathVariable String code) {
+            @PathVariable("code") String code) {
         return ResponseEntity.ok(
             ApiResponse.success(screenService.getByCode(code))
         );
@@ -58,7 +58,7 @@ public class ScreenController {
     @PostMapping("/sections/{sectionId}/screens")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<ScreenResponse>> create(
-            @PathVariable UUID sectionId,
+            @PathVariable("sectionId") UUID sectionId,
             @Valid @RequestBody ScreenRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
             ApiResponse.success(
@@ -70,7 +70,7 @@ public class ScreenController {
     @PutMapping("/screens/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<ScreenResponse>> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @Valid @RequestBody ScreenRequest request) {
         return ResponseEntity.ok(
             ApiResponse.success(
@@ -82,7 +82,7 @@ public class ScreenController {
     @PatchMapping("/screens/{id}/template")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<ScreenResponse>> updateTemplate(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @RequestBody String template) {
         return ResponseEntity.ok(
             ApiResponse.success(
@@ -93,7 +93,7 @@ public class ScreenController {
 
     @DeleteMapping("/screens/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") UUID id) {
         screenService.delete(id);
         return ResponseEntity.ok(
             ApiResponse.success(null, "Ekran silindi")

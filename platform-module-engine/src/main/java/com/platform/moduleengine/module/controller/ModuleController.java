@@ -40,7 +40,7 @@ public class ModuleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ModuleResponse>> getById(
-            @PathVariable UUID id) {
+            @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
             ApiResponse.success(moduleService.getById(id))
         );
@@ -58,7 +58,7 @@ public class ModuleController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<ModuleResponse>> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @Valid @RequestBody ModuleRequest request) {
         return ResponseEntity.ok(
             ApiResponse.success(moduleService.update(id, request), "Modül güncellendi")
@@ -67,7 +67,7 @@ public class ModuleController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") UUID id) {
         moduleService.delete(id);
         return ResponseEntity.ok(
             ApiResponse.success(null, "Modül silindi")
@@ -77,7 +77,7 @@ public class ModuleController {
     @PatchMapping("/{id}/toggle")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<ModuleResponse>> toggleActive(
-            @PathVariable UUID id) {
+            @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
             ApiResponse.success(
                 moduleService.toggleActive(id), "Modül durumu güncellendi"

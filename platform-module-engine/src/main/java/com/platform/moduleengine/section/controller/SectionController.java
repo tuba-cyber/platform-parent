@@ -32,7 +32,7 @@ public class SectionController {
 
     @GetMapping("/modules/{moduleId}/sections")
     public ResponseEntity<ApiResponse<List<SectionResponse>>> getByModuleId(
-            @PathVariable UUID moduleId) {
+            @PathVariable("moduleId") UUID moduleId) {
         return ResponseEntity.ok(
             ApiResponse.success(sectionService.getByModuleId(moduleId))
         );
@@ -40,7 +40,7 @@ public class SectionController {
 
     @GetMapping("/sections/{id}")
     public ResponseEntity<ApiResponse<SectionResponse>> getById(
-            @PathVariable UUID id) {
+            @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
             ApiResponse.success(sectionService.getById(id))
         );
@@ -49,7 +49,7 @@ public class SectionController {
     @PostMapping("/modules/{moduleId}/sections")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<SectionResponse>> create(
-            @PathVariable UUID moduleId,
+            @PathVariable("moduleId") UUID moduleId,
             @Valid @RequestBody SectionRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
             ApiResponse.success(
@@ -61,7 +61,7 @@ public class SectionController {
     @PutMapping("/sections/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
     public ResponseEntity<ApiResponse<SectionResponse>> update(
-            @PathVariable UUID id,
+            @PathVariable("id") UUID id,
             @Valid @RequestBody SectionRequest request) {
         return ResponseEntity.ok(
             ApiResponse.success(
@@ -72,7 +72,7 @@ public class SectionController {
 
     @DeleteMapping("/sections/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
-    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") UUID id) {
         sectionService.delete(id);
         return ResponseEntity.ok(
             ApiResponse.success(null, "Bölüm silindi")
