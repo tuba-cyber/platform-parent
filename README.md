@@ -4,11 +4,11 @@ Spring Boot 3 tabanlı, modüler mimariye sahip çok kiracılı (multi-tenant)
 bir white-label kurumsal web uygulaması. Her modül bağımsız bir Spring Boot 
 servisi olarak çalışır ve ortak güvenlik altyapısını paylaşır.
 
-> 🚧 Aktif geliştirme aşamasındadır.
+>  Aktif geliştirme aşamasındadır.
 
 ---
 
-## 🏗️ Mimari
+##  Mimari
 ```
 ┌─────────────────────────────────────────────────┐
 │                   CLIENT                        │
@@ -34,7 +34,7 @@ servisi olarak çalışır ve ortak güvenlik altyapısını paylaşır.
 
 ---
 
-## 📦 Modüller
+##  Modüller
 
 | Modül | Port | Açıklama |
 |-------|------|----------|
@@ -46,7 +46,7 @@ servisi olarak çalışır ve ortak güvenlik altyapısını paylaşır.
 
 ---
 
-## 🔐 Güvenlik Mimarisi
+##  Güvenlik Mimarisi
 
 - JWT tabanlı stateless kimlik doğrulama
 - Rol ve izin bazlı yetkilendirme (RBAC)
@@ -61,7 +61,7 @@ layerRepository.findByCompanyIdAndActive(companyId, true);
 
 ---
 
-## 🗺️ CBS Modülü (PostGIS)
+##  CBS Modülü (PostGIS)
 
 - PostGIS 3.5 + Hibernate Spatial entegrasyonu
 - Nokta, çizgi, poligon geometri desteği
@@ -70,7 +70,7 @@ layerRepository.findByCompanyIdAndActive(companyId, true);
 
 ---
 
-## 🛠️ Kullanılan Teknolojiler
+##  Kullanılan Teknolojiler
 
 **Backend**
 - Java 21
@@ -89,7 +89,7 @@ layerRepository.findByCompanyIdAndActive(companyId, true);
 
 ---
 
-## 🚀 Nasıl Çalıştırılır?
+##  Nasıl Çalıştırılır?
 
 ### Gereksinimler
 - Java 21
@@ -172,7 +172,7 @@ GET        /api/v1/features/layer/{layerId}/nearby
 
 ---
 
-## 👩‍💻 Geliştirici
+##  Geliştirici
 
 Aktif olarak geliştirilmekte olan bu proje, kurumsal düzeyde 
 ölçeklenebilir bir platform altyapısı oluşturma amacıyla başlatılmıştır.
