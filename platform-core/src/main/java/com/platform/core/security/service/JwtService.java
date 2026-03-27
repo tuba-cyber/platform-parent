@@ -115,4 +115,12 @@ public class JwtService {
         byte[] keyBytes = secretKey.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
+    public long getExpirationTime(String token) {
+        try {
+            Date expiration = extractClaim(token, Claims::getExpiration);
+            return expiration.getTime() - System.currentTimeMillis();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

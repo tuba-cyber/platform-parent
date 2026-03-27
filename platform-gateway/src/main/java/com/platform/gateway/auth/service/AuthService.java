@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.platform.core.common.exception.BaseException;
 import com.platform.core.common.exception.ResourceNotFoundException;
+import com.platform.core.security.filter.JwtAuthFilter;
 import com.platform.core.security.model.UserPrincipal;
 import com.platform.core.security.service.JwtService;
 import com.platform.gateway.auth.dto.LoginRequest;
@@ -38,6 +39,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtAuthFilter jwtAuthFilter;
 
     @Transactional
     public LoginResponse login(LoginRequest request) {
@@ -158,5 +160,9 @@ public class AuthService {
                 .roles(userPrincipal.getRoles())
                 .permissions(userPrincipal.getPermissions())
                 .build();
+    }
+    public void logout(String token) {
+        jwtAuthFilter.blacklistToken(token);
+        log.info("Kullanıcı çıkış yaptı");
     }
 }
