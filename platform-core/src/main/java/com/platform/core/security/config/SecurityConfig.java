@@ -24,6 +24,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.platform.core.security.filter.JwtAuthFilter;
+import com.platform.core.security.filter.RateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -40,6 +41,7 @@ public class SecurityConfig {
 
 	private final JwtAuthFilter jwtAuthFilter;
 	private final UserDetailsService userDetailsService;
+	private final RateLimitFilter rateLimitFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,7 +49,12 @@ public class SecurityConfig {
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated())
-				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(rateLimitFilter, 
+					    UsernamePasswordAuthenticationFilter.class)
+					.addFilterBefore(jwtAuthFilter, 
+					    UsernamePasswordAuthenticationFilter.class);
+//				.addFilterBefore(rateLimitFilter, JwtAuthFilter.class)
+//				.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
