@@ -156,7 +156,19 @@ GET        /api/v1/features/layer/{layerId}
 GET        /api/v1/features/layer/{layerId}/bbox
 GET        /api/v1/features/layer/{layerId}/nearby
 ```
+### DASHBOARD (8083)
+...
+Widget  → GET/POST        /api/v1/widgets
+        → GET/PUT/DELETE  /api/v1/widgets/{id}
 
+Dashboard → GET/POST        /api/v1/dashboards
+          → GET             /api/v1/dashboards/default
+          → GET/PUT/DELETE  /api/v1/dashboards/{id}
+          → POST            /api/v1/dashboards/{id}/widgets
+          → DELETE          /api/v1/dashboards/{id}/widgets/{widgetId}
+
+Report  → GET/POST        /api/v1/reports
+        → GET/PUT/DELETE  /api/v1/reports/{id}
 ---
 
 ## 📋 Geliştirme Durumu
@@ -165,7 +177,7 @@ GET        /api/v1/features/layer/{layerId}/nearby
 - [x] platform-gateway — Auth & kullanıcı yönetimi  
 - [x] platform-module-engine — Modül motoru
 - [x] platform-cbs — CBS & harita modülü
-- [ ] platform-dashboard — Dashboard & raporlama
+- [x] platform-dashboard — Dashboard & raporlama
 - [ ] Frontend — React + TypeScript
 - [ ] Docker & CI/CD
 - [ ] Swagger / OpenAPI dokümantasyonu
