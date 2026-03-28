@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.platform.core.audit.annotation.Auditable;
 import com.platform.core.common.response.ApiResponse;
 import com.platform.moduleengine.module.dto.ModuleRequest;
 import com.platform.moduleengine.module.dto.ModuleResponse;
@@ -48,6 +49,7 @@ public class ModuleController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Auditable(action = "MODULE_CREATE", entityType = "Module") 
     public ResponseEntity<ApiResponse<ModuleResponse>> create(
             @Valid @RequestBody ModuleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
