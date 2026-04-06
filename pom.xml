@@ -33,6 +33,8 @@
         <lombok.version>1.18.32</lombok.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <!-- JaCoCo argLine için varsayılan boş değer (Eclipse uyumluluğu) -->
+        <argLine></argLine>
     </properties>
 
     <dependencyManagement>
@@ -185,7 +187,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                     <configuration>
-                        <argLine>${argLine} -Dfile.encoding=UTF-8</argLine>
+                        <argLine>@{argLine} -Dfile.encoding=UTF-8</argLine>
                     </configuration>
                 </plugin>
             </plugins>
