@@ -1,0 +1,33 @@
+# ============================================================
+# DEV Profili — platform-gateway
+# Yerel geliştirme için rahat ayarlar
+# ============================================================
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/platformdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+logging:
+  level:
+    com.platform: DEBUG
+    org.springframework.security: DEBUG
+
+# Actuator: dev'de her şey açık
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

@@ -1,0 +1,58 @@
+# ============================================================
+# PRODUCTION Profili — platform-gateway
+# Çalıştırmak için: SPRING_PROFILES_ACTIVE=prod
+#
+# Hassas değerler ortam değişkeninden okunur,
+# bu dosyaya asla şifre/secret yazma!
+# ============================================================
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    hibernate:
+      ddl-auto: validate      # Production'da tablo oluşturma — sadece validate!
+    show-sql: false           # SQL loglarını kapat (performans)
+    properties:
+      hibernate:
+        format_sql: false
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT:-6379}
+      password: ${SPRING_DATA_REDIS_PASSWORD}
+      timeout: 2000ms
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: 86400000
+  refresh-expiration: 604800000
+
+# Logging: production'da sadece WARN ve üzeri
+logging:
+  level:
+    root: WARN
+    com.platform: INFO
+    org.springframework.security: WARN
+  file:
+    name: /var/log/platform/gateway.log
+    max-size: 100MB
+    max-history: 30
+
+# Actuator: sadece health endpoint açık
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

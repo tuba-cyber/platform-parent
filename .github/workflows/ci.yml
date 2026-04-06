@@ -1,0 +1,201 @@
+# ============================================================
+# GitHub Actions — CI/CD Pipeline
+#
+# Ne zaman çalışır?
+#   - main, master, develop branch'lerine push yapıldığında
+#   - Bu branch'lere Pull Request açıldığında
+#
+# Ne yapar?
+#   1. Kodu derler
+#   2. Tüm testleri çalıştırır
+#   3. Test raporu oluşturur
+#   4. (İleride) Docker image build edip push eder
+# ============================================================
+
+name: CI — Build & Test
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+
+  # ──────────────────────────────────────────────────────────
+  # JOB 1: Derleme ve Test
+  # ──────────────────────────────────────────────────────────
+  build-and-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    # PostgreSQL servisi — entegrasyon testleri için
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4-alpine
+        env:
+          POSTGRES_DB: platformdb_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7.2-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      # 1. Kodu indir
+      - name: Kodu İndir
+        uses: actions/checkout@v4
+
+      # 2. Java 21 kur
+      - name: Java 21 Kur
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven       # Maven bağımlılıklarını cache'le (hız için)
+
+      # 3. Derle
+      - name: Projeyi Derle
+        run: mvn clean compile -q
+
+      # 4. Testleri çalıştır
+      - name: Testleri Çalıştır
+        run: mvn test
+        env:
+          # Unit testler H2 kullanıyor, bu değişkenler entegrasyon testleri için
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5433/platformdb_test
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
+          SPRING_DATA_REDIS_HOST: localhost
+          SPRING_DATA_REDIS_PORT: 6379
+          JWT_SECRET: test-secret-key-at-least-64-characters-long-for-hmac-sha-algorithm
+
+      # 5. Test sonuçlarını göster (başarısız olsa bile)
+      - name: Test Sonuçlarını Yayımla
+        uses: dorny/test-reporter@v1
+        if: always()        # Testler başarısız olsa bile çalış
+        with:
+          name: JUnit Test Sonuçları
+          path: '**/target/surefire-reports/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
+
+      # 6. JaCoCo coverage raporunu yükle
+      - name: Coverage Raporunu Yükle
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jacoco-coverage-report
+          path: '**/target/site/jacoco/'
+          retention-days: 7
+
+  # ──────────────────────────────────────────────────────────
+  # JOB 2: Kod Kalitesi Kontrolü
+  # ──────────────────────────────────────────────────────────
+  code-quality:
+    name: Kod Kalitesi
+    runs-on: ubuntu-latest
+    needs: build-and-test    # build-and-test bittikten sonra çalış
+
+    steps:
+      - name: Kodu İndir
+        uses: actions/checkout@v4
+
+      - name: Java 21 Kur
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # Dependency güvenlik açığı taraması
+      - name: Bağımlılık Güvenlik Taraması
+        run: mvn dependency:check -q
+        continue-on-error: true   # Uyarı verse de pipeline'ı durdurma
+
+  # ──────────────────────────────────────────────────────────
+  # JOB 3: Docker Image Build (sadece main/master'a push'ta)
+  # ──────────────────────────────────────────────────────────
+  docker-build:
+    name: Docker Image Build
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    # Sadece main veya master branch'ine push yapılınca çalış
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+
+    steps:
+      - name: Kodu İndir
+        uses: actions/checkout@v4
+
+      - name: Java 21 Kur
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # JAR dosyalarını oluştur
+      - name: JAR Dosyaları Oluştur
+        run: mvn clean package -DskipTests -q
+
+      # Docker Buildx kur (çoklu platform desteği için)
+      - name: Docker Buildx Kur
+        uses: docker/setup-buildx-action@v3
+
+      # Gateway image'ı derle
+      - name: Gateway Image Derle
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: platform-gateway/Dockerfile
+          push: false          # Şimdilik sadece derle, push etme
+          tags: platform-gateway:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Module Engine image'ı derle
+      - name: Module Engine Image Derle
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: platform-module-engine/Dockerfile
+          push: false
+          tags: platform-module-engine:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # CBS image'ı derle
+      - name: CBS Image Derle
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: platform-cbs/Dockerfile
+          push: false
+          tags: platform-cbs:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Dashboard image'ı derle
+      - name: Dashboard Image Derle
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: platform-dashboard/Dockerfile
+          push: false
+          tags: platform-dashboard:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
