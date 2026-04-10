@@ -19,6 +19,7 @@
         <module>platform-module-engine</module>
         <module>platform-cbs</module>
         <module>platform-dashboard</module>
+        <module>platform-co</module>
     </modules>
 
     <properties>

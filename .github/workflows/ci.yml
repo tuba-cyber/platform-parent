@@ -20,6 +20,12 @@ on:
   pull_request:
     branches: [ main, master, develop ]
 
+# GitHub Actions'ın ihtiyaç duyduğu yetkiler
+permissions:
+  contents: read
+  checks: write        # Test sonuçlarını GitHub'a yazabilmek için
+  pull-requests: write # PR'lara yorum yapabilmek için
+
 jobs:
 
   # ──────────────────────────────────────────────────────────
