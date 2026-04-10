@@ -22,17 +22,21 @@ import com.platform.moduleengine.module.dto.ModuleRequest;
 import com.platform.moduleengine.module.dto.ModuleResponse;
 import com.platform.moduleengine.module.service.ModuleService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/modules")
 @RequiredArgsConstructor
+@Tag(name = "Modül Yönetimi", description = "Platform modüllerinin CRUD ve aktif/pasif yönetimi")
 public class ModuleController {
 
     private final ModuleService moduleService;
 
     @GetMapping
+    @Operation(summary = "Tüm modülleri listele", description = "Sistemdeki tüm modülleri döner.")
     public ResponseEntity<ApiResponse<List<ModuleResponse>>> getAll() {
         return ResponseEntity.ok(
             ApiResponse.success(moduleService.getAll())
@@ -40,6 +44,7 @@ public class ModuleController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Modül detayı", description = "ID ile tek bir modülün detayını getirir.")
     public ResponseEntity<ApiResponse<ModuleResponse>> getById(
             @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
@@ -49,7 +54,8 @@ public class ModuleController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
-    @Auditable(action = "MODULE_CREATE", entityType = "Module") 
+    @Auditable(action = "MODULE_CREATE", entityType = "Module")
+    @Operation(summary = "Modül oluştur", description = "Yeni bir platform modülü oluşturur. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<ModuleResponse>> create(
             @Valid @RequestBody ModuleRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -59,6 +65,7 @@ public class ModuleController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Modül güncelle", description = "Mevcut modülün bilgilerini günceller. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<ModuleResponse>> update(
             @PathVariable("id") UUID id,
             @Valid @RequestBody ModuleRequest request) {
@@ -69,6 +76,7 @@ public class ModuleController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Modül sil", description = "Modülü soft-delete ile siler. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") UUID id) {
         moduleService.delete(id);
         return ResponseEntity.ok(
@@ -78,6 +86,7 @@ public class ModuleController {
 
     @PatchMapping("/{id}/toggle")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Modül aktif/pasif yap", description = "Modülün aktif durumunu tersine çevirir. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<ModuleResponse>> toggleActive(
             @PathVariable("id") UUID id) {
         return ResponseEntity.ok(

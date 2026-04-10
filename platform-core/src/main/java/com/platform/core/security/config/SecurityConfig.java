@@ -48,7 +48,17 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers("/api/v1/auth/**").permitAll().anyRequest().authenticated())
+						.requestMatchers("/api/v1/auth/**").permitAll()
+						// Swagger / OpenAPI UI endpoint'leri
+						.requestMatchers(
+							"/swagger-ui.html",
+							"/swagger-ui/**",
+							"/v3/api-docs",
+							"/v3/api-docs/**",
+							"/swagger-resources/**",
+							"/webjars/**"
+						).permitAll()
+						.anyRequest().authenticated())
 				.addFilterBefore(rateLimitFilter, 
 					    UsernamePasswordAuthenticationFilter.class)
 					.addFilterBefore(jwtAuthFilter, 

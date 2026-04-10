@@ -33,6 +33,7 @@
         <lombok.version>1.18.32</lombok.version>
         <testcontainers.version>1.19.7</testcontainers.version>
         <jacoco.version>0.8.12</jacoco.version>
+        <springdoc.version>2.5.0</springdoc.version>
         <!-- JaCoCo argLine için varsayılan boş değer (Eclipse uyumluluğu) -->
         <argLine></argLine>
     </properties>
@@ -81,6 +82,13 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+
+            <!-- SpringDoc OpenAPI (Swagger UI) -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
             </dependency>
 
             <!-- MapStruct -->

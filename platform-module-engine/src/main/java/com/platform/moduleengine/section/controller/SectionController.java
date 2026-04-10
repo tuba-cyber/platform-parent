@@ -20,17 +20,21 @@ import com.platform.moduleengine.section.dto.SectionRequest;
 import com.platform.moduleengine.section.dto.SectionResponse;
 import com.platform.moduleengine.section.service.SectionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "Bölüm Yönetimi", description = "Modül bölümlerinin (section) yönetimi. Her bölüm birden fazla ekran içerebilir.")
 public class SectionController {
 
     private final SectionService sectionService;
 
     @GetMapping("/modules/{moduleId}/sections")
+    @Operation(summary = "Modüle ait bölümleri listele", description = "Belirtilen modüle ait tüm bölümleri döner.")
     public ResponseEntity<ApiResponse<List<SectionResponse>>> getByModuleId(
             @PathVariable("moduleId") UUID moduleId) {
         return ResponseEntity.ok(
@@ -39,6 +43,7 @@ public class SectionController {
     }
 
     @GetMapping("/sections/{id}")
+    @Operation(summary = "Bölüm detayı", description = "ID ile tek bir bölümün detayını getirir.")
     public ResponseEntity<ApiResponse<SectionResponse>> getById(
             @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
@@ -48,6 +53,7 @@ public class SectionController {
 
     @PostMapping("/modules/{moduleId}/sections")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Bölüm oluştur", description = "Belirtilen modüle yeni bir bölüm ekler. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<SectionResponse>> create(
             @PathVariable("moduleId") UUID moduleId,
             @Valid @RequestBody SectionRequest request) {

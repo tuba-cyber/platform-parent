@@ -21,17 +21,21 @@ import com.platform.moduleengine.screen.dto.ScreenRequest;
 import com.platform.moduleengine.screen.dto.ScreenResponse;
 import com.platform.moduleengine.screen.service.ScreenService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
+@Tag(name = "Ekran Yönetimi", description = "Modül ekranlarının (screen) ve JSON şablonlarının yönetimi")
 public class ScreenController {
 
     private final ScreenService screenService;
 
     @GetMapping("/sections/{sectionId}/screens")
+    @Operation(summary = "Bölüme ait ekranları listele", description = "Belirtilen bölüme (section) ait tüm ekranları döner.")
     public ResponseEntity<ApiResponse<List<ScreenResponse>>> getBySectionId(
             @PathVariable("sectionId") UUID sectionId) {
         return ResponseEntity.ok(
@@ -40,6 +44,7 @@ public class ScreenController {
     }
 
     @GetMapping("/screens/{id}")
+    @Operation(summary = "Ekran detayı", description = "ID ile tek bir ekranın detayını getirir.")
     public ResponseEntity<ApiResponse<ScreenResponse>> getById(
             @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
@@ -48,6 +53,7 @@ public class ScreenController {
     }
 
     @GetMapping("/screens/code/{code}")
+    @Operation(summary = "Kod ile ekran getir", description = "Benzersiz ekran kodu (code) ile ekranı getirir. Frontend routing için kullanılır.")
     public ResponseEntity<ApiResponse<ScreenResponse>> getByCode(
             @PathVariable("code") String code) {
         return ResponseEntity.ok(
@@ -57,6 +63,7 @@ public class ScreenController {
 
     @PostMapping("/sections/{sectionId}/screens")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Ekran oluştur", description = "Belirtilen bölüme yeni bir ekran ekler. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<ScreenResponse>> create(
             @PathVariable("sectionId") UUID sectionId,
             @Valid @RequestBody ScreenRequest request) {
@@ -69,6 +76,7 @@ public class ScreenController {
 
     @PutMapping("/screens/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Ekran güncelle", description = "Mevcut ekranın bilgilerini günceller. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<ScreenResponse>> update(
             @PathVariable("id") UUID id,
             @Valid @RequestBody ScreenRequest request) {
@@ -81,6 +89,8 @@ public class ScreenController {
 
     @PatchMapping("/screens/{id}/template")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Ekran şablonunu güncelle",
+               description = "Ekranın JSON şablon tanımını günceller. Frontend'in ekranı nasıl render edeceğini belirler.")
     public ResponseEntity<ApiResponse<ScreenResponse>> updateTemplate(
             @PathVariable("id") UUID id,
             @RequestBody String template) {
@@ -93,6 +103,7 @@ public class ScreenController {
 
     @DeleteMapping("/screens/{id}")
     @PreAuthorize("hasAuthority('MODULE_EDIT')")
+    @Operation(summary = "Ekran sil", description = "Ekranı soft-delete ile siler. MODULE_EDIT yetkisi gerektirir.")
     public ResponseEntity<ApiResponse<Void>> delete(@PathVariable("id") UUID id) {
         screenService.delete(id);
         return ResponseEntity.ok(

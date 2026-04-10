@@ -20,18 +20,22 @@ import com.platform.dashboard.report.dto.ReportRequest;
 import com.platform.dashboard.report.dto.ReportResponse;
 import com.platform.dashboard.report.service.ReportService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/reports")
 @RequiredArgsConstructor
+@Tag(name = "Rapor Yönetimi", description = "Rapor tanımları yönetimi. Rapor türleri: TABLE, CHART, MAP, MIXED")
 public class ReportController {
 
     private final ReportService reportService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('DASHBOARD_VIEW')")
+    @Operation(summary = "Tüm raporları listele", description = "Tenant'a ait tüm rapor tanımlarını listeler.")
     public ResponseEntity<ApiResponse<List<ReportResponse>>> getAll() {
         return ResponseEntity.ok(
             ApiResponse.success(reportService.getAll())
@@ -40,6 +44,7 @@ public class ReportController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('DASHBOARD_VIEW')")
+    @Operation(summary = "Rapor detayı", description = "ID ile tek bir rapor tanımının detayını getirir.")
     public ResponseEntity<ApiResponse<ReportResponse>> getById(
             @PathVariable("id") UUID id) {
         return ResponseEntity.ok(
@@ -49,6 +54,8 @@ public class ReportController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('DASHBOARD_VIEW')")
+    @Operation(summary = "Rapor oluştur",
+               description = "Yeni bir rapor tanımı oluşturur. Rapor türüne göre veri kaynağı yapılandırılır.")
     public ResponseEntity<ApiResponse<ReportResponse>> create(
             @Valid @RequestBody ReportRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
@@ -60,6 +67,7 @@ public class ReportController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('DASHBOARD_VIEW')")
+    @Operation(summary = "Rapor güncelle", description = "Mevcut rapor tanımının bilgilerini günceller.")
     public ResponseEntity<ApiResponse<ReportResponse>> update(
             @PathVariable("id") UUID id,
             @Valid @RequestBody ReportRequest request) {
@@ -72,6 +80,7 @@ public class ReportController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('DASHBOARD_VIEW')")
+    @Operation(summary = "Rapor sil", description = "Rapor tanımını soft-delete ile siler.")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable("id") UUID id) {
         reportService.delete(id);
