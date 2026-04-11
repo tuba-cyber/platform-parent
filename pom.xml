@@ -20,6 +20,7 @@
         <module>platform-cbs</module>
         <module>platform-dashboard</module>
         <module>platform-co</module>
+        <module>platform-hr</module>
     </modules>
 
     <properties>
