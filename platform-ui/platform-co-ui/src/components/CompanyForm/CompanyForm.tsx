@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { companyApi, CompanyRequest } from "../../api/companyApi";
+import BranchList from "../BranchList/BranchList";
 
 const COMPANY_TYPES = [
   { value: "AS",        label: "Anonim Şirket" },
@@ -165,6 +166,13 @@ const CompanyForm: React.FC = () => {
           </button>
         </div>
       </form>
+
+      {/* Şubeler — yalnızca düzenleme modunda */}
+      {isEdit && id && (
+        <div className="mt-6 bg-white rounded-xl border border-gray-100 p-5 shadow-sm">
+          <BranchList companyId={id} />
+        </div>
+      )}
     </div>
   );
 };

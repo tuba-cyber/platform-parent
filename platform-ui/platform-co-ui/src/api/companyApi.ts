@@ -56,6 +56,20 @@ export interface CompanyRequest {
   description?: string;
 }
 
+export interface Branch {
+  id: string;
+  companyId: string;
+  name: string;
+  code: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  city?: string;
+  district?: string;
+  headquarters: boolean;
+  active: boolean;
+}
+
 export const companyApi = {
   getAll:    ()           => api.get<any>("/companies"),
   getById:   (id: string) => api.get<any>(`/companies/${id}`),
@@ -63,4 +77,12 @@ export const companyApi = {
   update:    (id: string, data: CompanyRequest) => api.put<any>(`/companies/${id}`, data),
   toggle:    (id: string) => api.patch<any>(`/companies/${id}/toggle`),
   search:    (keyword: string) => api.get<any>(`/companies/search?keyword=${keyword}`),
+};
+
+export const branchApi = {
+  getByCompany: (companyId: string) => api.get<any>(`/v1/branches/company/${companyId}`),
+  getById:      (id: string)        => api.get<any>(`/v1/branches/${id}`),
+  create:       (data: any)         => api.post<any>("/v1/branches", data),
+  update:       (id: string, data: any) => api.put<any>(`/v1/branches/${id}`, data),
+  delete:       (id: string)        => api.delete<any>(`/v1/branches/${id}`),
 };

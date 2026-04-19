@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import LoginPage from "./pages/Login/LoginPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
+import ModuleAdminPage from "./pages/Admin/ModuleAdminPage";
+import ScreenBuilderPage from "./pages/Admin/ScreenBuilderPage";
 
 // Module Federation — remote modüller lazy load edilir
 const CompanyRoutes = lazy(() => import("platformCo/CompanyRoutes"));
@@ -20,6 +22,9 @@ const App: React.FC = () => {
       <Routes>
         {/* Public */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* Screen Builder — tam ekran, layout dışında */}
+        <Route path="/admin/builder/:moduleId/:screenId" element={<ScreenBuilderPage />} />
 
         {/* Protected */}
         <Route element={<Layout />}>
@@ -44,6 +49,9 @@ const App: React.FC = () => {
               </Suspense>
             }
           />
+
+          {/* Admin: Modül Yönetimi */}
+          <Route path="admin/modules" element={<ModuleAdminPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

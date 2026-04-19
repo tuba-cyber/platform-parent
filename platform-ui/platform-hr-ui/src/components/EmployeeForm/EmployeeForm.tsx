@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { employeeApi } from "../../api/hrApi";
+import { employeeApi, departmentApi, positionApi, Department, Position } from "../../api/hrApi";
 
 const getCompanyId = (): string => {
   try {
@@ -57,8 +57,16 @@ const EmployeeForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [positions, setPositions] = useState<Position[]>([]);
 
   useEffect(() => {
+    const companyId = getCompanyId();
+    // Load departments and positions for dropdowns
+    if (companyId) {
+      departmentApi.getByCompany(companyId).then((r) => setDepartments(r.data.data || []));
+      positionApi.getByCompany(companyId).then((r) => setPositions(r.data.data || []));
+    }
     if (isEdit) {
       setLoading(true);
       employeeApi.getById(id!)
@@ -117,6 +125,22 @@ const EmployeeForm: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             <Field label="Sicil No"><input value={form.employeeNumber} onChange={(e) => set("employeeNumber", e.target.value)} className={inp} /></Field>
             <Field label="İşe Başlama Tarihi"><input type="date" value={form.startDate} onChange={(e) => set("startDate", e.target.value)} className={inp} /></Field>
+            <Field label="Departman">
+              <select value={form.departmentId || ""} onChange={(e) => set("departmentId", e.target.value || null)} className={inp}>
+                <option value="">— Departman Seç —</option>
+                {departments.filter((d) => d.active).map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Pozisyon">
+              <select value={form.positionId || ""} onChange={(e) => set("positionId", e.target.value || null)} className={inp}>
+                <option value="">— Pozisyon Seç —</option>
+                {positions.filter((p) => p.active).map((p) => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
+            </Field>
             <Field label="Çalışma Tipi">
               <select value={form.employmentType} onChange={(e) => set("employmentType", e.target.value)} className={inp}>
                 {EMPLOYMENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
